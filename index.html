@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>هیئت ژوری</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<audio id="bgm" src="assets/music.mp3" loop preload="none"></audio>
+<button id="musicBtn" class="music" aria-label="قطع و وصل موسیقی">🔊</button>
+<div id="loadErr" class="err" hidden>فایل cases.json خوانده نشد. سایت را با یک وب‌سرور (مثلاً Live Server یا هاست) باز کنید، نه مستقیم از روی فایل.</div>
+
+<main>
+<!-- صفحه اصلی -->
+<section class="screen" id="home">
+  <div class="gavel">⚖</div>
+  <h1>هیئت ژوری</h1>
+  <p class="lead">یک نفر قاضی است، یک نفر شاکی، یک نفر متهم. حق با کیست؟</p>
+  <nav class="menu">
+    <button class="btn main" data-go="count">ورود به بازی</button>
+    <button class="btn" data-go="how">نحوه اجرای بازی</button>
+    <button class="btn" data-go="credits">سازندگان</button>
+    <button class="btn" data-go="info">اطلاعات بیشتر</button>
+  </nav>
+</section>
+
+<!-- آموزش -->
+<section class="screen" id="how" hidden>
+  <h2>نحوه اجرای بازی</h2>
+  <div class="paper" id="stepBox"></div>
+  <div class="dots" id="stepDots"></div>
+  <div class="row">
+    <button class="btn" id="stepPrev">قبلی</button>
+    <button class="btn main" id="stepNext">بعدی</button>
+  </div>
+  <button class="link" data-go="home">بازگشت به صفحه اصلی</button>
+</section>
+
+<!-- سازندگان -->
+<section class="screen" id="credits" hidden>
+  <h2>سازندگان</h2>
+  <div class="paper center">
+    <p class="who">آریا بهنام‌فر</p>
+    <p class="who">ابوالفضل انصار</p>
+    <p class="who">سبحان جعفری</p>
+    <hr>
+    <p>پژوهشسرای دانش‌آموزی بجنورد</p>
+    <p class="muted">استاد راهنما: آقای بهنام‌فر</p>
+  </div>
+  <button class="link" data-go="home">بازگشت به صفحه اصلی</button>
+</section>
+
+<!-- اطلاعات بیشتر -->
+<section class="screen" id="info" hidden>
+  <h2>اطلاعات بیشتر</h2>
+  <div class="paper">
+    <h3>نقش‌ها</h3>
+    <p><b>قاضی:</b> هیچ چیز نمی‌داند. فقط گوش می‌دهد، سؤال می‌پرسد و رأی می‌دهد.</p>
+    <p><b>شاکی:</b> شکایت را مطرح می‌کند. ممکن است راست بگوید، ممکن است نه.</p>
+    <p><b>متهم:</b> از خودش دفاع می‌کند. ممکن است بی‌گناه باشد، ممکن است نه.</p>
+    <h3>برد و باخت</h3>
+    <p>اگر قاضی درست تشخیص دهد، قاضی و شاکی برنده‌اند. اگر اشتباه کند، متهم برنده است؛ چون توانسته قاضی را راضی کند.</p>
+    <h3>پرونده‌ها</h3>
+    <p>هر پرونده تعداد بازیکن مخصوص خودش را دارد و ممکن است شاکی یا متهم چند نفره باشند. پرونده‌های بیشتر در حال ساخت است.</p>
+  </div>
+  <button class="link" data-go="home">بازگشت به صفحه اصلی</button>
+</section>
+
+<!-- تعداد نفرات -->
+<section class="screen" id="count" hidden>
+  <h2>چند نفر هستید؟</h2>
+  <div class="counter">
+    <button class="round" id="minus">−</button>
+    <output id="countVal">3</output>
+    <button class="round" id="plus">+</button>
+  </div>
+  <button class="btn main" id="toCases">دیدن پرونده‌ها</button>
+  <button class="link" data-go="home">بازگشت</button>
+</section>
+
+<!-- پرونده‌ها -->
+<section class="screen" id="cases" hidden>
+  <h2>یک پرونده انتخاب کنید</h2>
+  <p class="muted" id="casesNote"></p>
+  <div id="caseList" class="list"></div>
+  <button class="link" data-go="count">تغییر تعداد نفرات</button>
+</section>
+
+<!-- نام‌ها -->
+<section class="screen" id="names" hidden>
+  <h2>نام بازیکنان</h2>
+  <form id="namesForm" class="paper" autocomplete="off"></form>
+  <p class="err" id="namesErr" hidden></p>
+  <button class="btn main" id="assign">پخش نقش‌ها</button>
+  <button class="link" data-go="cases">بازگشت</button>
+</section>
+
+<!-- کارت‌ها -->
+<section class="screen" id="deal" hidden>
+  <h2>نقش خودتان را ببینید</h2>
+  <p class="muted">هر نفر روی کارت خودش بزند، نقشش را بخواند، پنجره را ببندد و گوشی را به نفر بعد بدهد.</p>
+  <div id="cardGrid" class="grid"></div>
+  <p class="muted" id="seenCount"></p>
+  <button class="btn main" id="toHearing" disabled>شروع دادرسی</button>
+</section>
+
+<!-- دادرسی -->
+<section class="screen" id="hearing" hidden>
+  <h2>دادرسی</h2>
+  <div class="stage" id="stageBox"></div>
+  <div class="timer">
+    <output id="timerOut">00:00</output>
+    <button class="chip" data-sec="60">۱ دقیقه</button>
+    <button class="chip" data-sec="120">۲ دقیقه</button>
+    <button class="chip" data-sec="180">۳ دقیقه</button>
+  </div>
+  <div class="paper" id="publicFile"></div>
+  <button class="btn main" id="nextStage">مرحله بعد</button>
+</section>
+
+<!-- رأی -->
+<section class="screen" id="verdict" hidden>
+  <h2>رأی قاضی</h2>
+  <p class="lead">قاضی: گوشی دست شماست. حق با کیست؟</p>
+  <div class="row">
+    <button class="btn vote" data-v="plaintiff">حق با شاکی</button>
+    <button class="btn vote" data-v="defendant">حق با متهم</button>
+  </div>
+</section>
+
+<!-- نتیجه -->
+<section class="screen" id="result" hidden>
+  <div id="resultBox"></div>
+  <button class="btn main" id="again">بازی جدید</button>
+</section>
+</main>
+
+<!-- پنجره نقش -->
+<div class="modal" id="modal" hidden>
+  <div class="sheet" role="dialog" aria-modal="true">
+    <div class="sheet-body" id="modalBody"></div>
+    <button class="btn main sticky" id="modalClose">خواندم، ببند</button>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
